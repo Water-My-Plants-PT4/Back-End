@@ -1,54 +1,49 @@
-const pgConnection = process.env.DATABASE_URL
-
+// Update with your config settings.
+const dotenv = require('dotenv').config()
 module.exports = {
     development: {
         client: 'sqlite3',
-        useNullAsDefault: true,
+        debug: true,
         connection: {
-            filename: './src/data/wmp.db3'
+            filename: './src/data/dev.sqlite3'
         },
-        migrations: {
-            directory: './src/data/migrations'
-        },
-        seeds: {
-            directory: './src/data/seeds'
-        },
+
+        useNullAsDefault: true,
+        migrations: { directory: 'src/data/migrations' },
         pool: {
-            afterCreate: (conn, done) => {
+            afterCreate: (conn, done) =>
                 conn.run('PRAGMA foreign_keys = ON', done)
-            }
         }
     },
 
-    testing: {
-        client: 'sqlite3',
-        useNullAsDefault: true,
-        migrations: {
-            directory: './src/data/migrations'
-        },
-        seeds: {
-            directory: './src/data/seeds'
-        },
-        connection: {
-            filename: './src/data/test.db3'
-        }
-    },
-
-    production: {
+    staging: {
         client: 'pg',
-        connection: {
-            connectionString: pgConnection,
-            ssl: { rejectUnauthorized: false }
-        },
+        connection: { connectionString: process.env.DATABASE_URL, ssl: true },
+        useNullAsDefault: true,
+        debug: true,
         pool: {
             min: 2,
             max: 10
         },
+        searchPath: ['knex', 'public'],
         migrations: {
-            directory: './src/data/migrations'
+            directory: 'src/data/migrations'
         },
-        seeds: {
-            directory: './src/data/seeds'
-        }
+        acquireConnectionTimeout: 10000
+    },
+
+    production: {
+        client: 'pg',
+        connection: { connectionString: process.env.DATABASE_URL, ssl: true },
+        pool: {
+            min: 2,
+            max: 10
+        },
+        searchPath: ['knex', 'public'],
+        useNullAsDefault: true,
+        migrations: {
+            directory: 'src/data/migrations'
+        },
+        acquireConnectionTimeout: 10000
     }
 }
