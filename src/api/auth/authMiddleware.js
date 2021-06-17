@@ -5,21 +5,23 @@ const db = require('../../data/dbConfig')
 
 const restricted = (req, res, next) => {
     try {
-        const token = req.headers.authorization?.split(' ')[1]
+        const token = req.headers.authorization.split(' ')[1]
+
         if (token) {
-            jwt.verify(token, jwtSecret, (err, decodedToken) => {
+            jwt.verify(token, secrets.jwtSecret, (err, decodedToken) => {
                 if (err) {
-                    res.status(401).json({ message: 'Token invalid!' })
+                    res.status(401).json({ you: "can't touch this" })
                 } else {
-                    req.decodedToken = decodedToken
+                    req.decodedJwt = decodedToken
+                    console.log(req.decodedJwt)
                     next()
                 }
             })
         } else {
-            res.status(401).json({ message: 'Token required!' })
+            throw new Error('invalid auth data')
         }
     } catch (err) {
-        next({ apiCode: 500, apiMessage: 'Error verifying token!', ...err })
+        res.status(401).json({ error: err.message })
     }
 }
 
