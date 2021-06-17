@@ -18,7 +18,10 @@ module.exports = {
 
     staging: {
         client: 'pg',
-        connection: { connectionString: process.env.DATABASE_URL, ssl: true },
+        connection: {
+            connectionString: process.env.DATABASE_URL,
+            ssl: { rejectUnauthorized: false }
+        },
         useNullAsDefault: true,
         debug: true,
         pool: {
@@ -36,7 +39,7 @@ module.exports = {
         client: 'pg',
         connection: {
             connectionString: process.env.DATABASE_URL,
-            ssl: { rejectUnauthorized: false }
+            ssl: true
         },
         pool: {
             min: 2,
