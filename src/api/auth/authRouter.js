@@ -17,11 +17,11 @@ router.post(
     requirePassword,
     checkUsernameForFree,
     async (req, res, next) => {
-        const credentials = req.body
+        const creds = req.body
         try {
-            const hash = bcrypt.hashSync(credentials.password, 8)
-            credentials.password = hash
-            let user = await Users.add(credentials)
+            const hash = bcrypt.hashSync(creds.password, 8)
+            creds.password = hash
+            let user = await Users.add(creds)
             const token = generateToken(user)
             res.status(201).json({ user, token })
         } catch (err) {
@@ -39,12 +39,11 @@ router.post(
         const { username, password } = req.body
 
         try {
-            const [user] = await Users.findBy({ username })
+            const [user] = await Users.findByFilter({ username })
 
             if (user && bcrypt.compareSync(password, user.password)) {
                 const token = generateToken(user)
                 res.status(200).json({
-                    message: `${username} is back!`,
                     token: token
                 })
             } else {
@@ -52,7 +51,6 @@ router.post(
             }
         } catch (err) {
             next({ apiCode: 500, apiMessage: 'Error Logging in User.', ...err })
-            // next(err)
         }
     }
 )
