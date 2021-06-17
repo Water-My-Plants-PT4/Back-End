@@ -5,7 +5,7 @@ module.exports = {
         client: 'sqlite3',
         debug: true,
         connection: {
-            filename: './src/data/dev.sqlite3'
+            filename: './src/data/wmp.sqlite3'
         },
 
         useNullAsDefault: true,
@@ -34,7 +34,10 @@ module.exports = {
 
     production: {
         client: 'pg',
-        connection: { connectionString: process.env.DATABASE_URL, ssl: true },
+        connection: {
+            connectionString: process.env.DATABASE_URL,
+            ssl: { rejectUnauthorized: false }
+        },
         pool: {
             min: 2,
             max: 10
